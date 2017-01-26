@@ -4,9 +4,11 @@ open System;
 open Microsoft.CodeAnalysis;
 open Microsoft.CodeAnalysis.CSharp;
 open Microsoft.CodeAnalysis.CSharp.Syntax;
-open Microsoft.CodeAnalysis.CSharp.Symbols;
 
 open Netgular.TypeScriptModel;
+open Netgular.Utils;
+open Netgular.Config;
+open Netgular.Resolvers;
 
 type Context = {
     compilation: CSharpCompilation
@@ -23,19 +25,18 @@ let parseSource source =
 let getType context name =
     context.compilation.GetTypeByMetadataName name
 
-let transpileClass context (classSymbol:INamedTypeSymbol) =
-    let transpileProperty (property:IPropertySymbol) =
+let private getProperties (classSymbol:INamedTypeSymbol) =
+    classSymbol.GetMembers()
+        |> Seq.where (fun m -> m.Kind = SymbolKind.Property) 
+        |> Seq.cast<IPropertySymbol>
+
+let transpileInterface config context (classSymbol: INamedTypeSymbol) =
+    let getMember (property:IPropertySymbol) =
         let name = property.Name
-        let tsType = match property.Type.Name with
-                     | "String" -> TSString
-                     | "Int32" -> TSNumber
+        let tsType = resolveTypeRef config property.Type
         TSField(tsType, name)
-
-    let fields = classSymbol.GetMembers()
-                    |> Seq.where (fun m -> m.Kind = SymbolKind.Property) 
-                    |> Seq.cast<IPropertySymbol>
-                    |> Seq.map transpileProperty
+    let fields = getProperties classSymbol
+                    |> Seq.map getMember
                     |> Seq.toList
-
     { name = classSymbol.Name; members = fields }
-   
+ 

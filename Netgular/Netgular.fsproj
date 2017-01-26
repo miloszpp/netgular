@@ -55,7 +55,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="Component1.fs" />
+    <Compile Include="Config.fs" />
+    <Compile Include="Utils.fs" />
+    <Compile Include="Resolvers.fs" />
+    <Compile Include="Transpiler.fs" />
     <Compile Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>

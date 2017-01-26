@@ -2,13 +2,7 @@
 // See the 'F# Tutorial' project for more help.
 
 open Netgular.Transpiler
-
-open Microsoft.CodeAnalysis;
-open Microsoft.CodeAnalysis.CSharp;
-open Microsoft.CodeAnalysis.CSharp.Syntax;
-open Microsoft.CodeAnalysis.CSharp.Symbols;
-
-
+open Netgular.Config
 
 let sampleCode = """
 using System;
@@ -17,9 +11,18 @@ using System.Text;
 
 namespace HelloWorld
 {
+    class Page 
+    {
+        public string Text { get; set; }
+        public int Length { get; set; }
+    }
+
     class Book
     {
         public string Title { get; set; }
+        public int? NumPages { get; set; }
+        public double Price { get; set; }
+        public IEnumerable<Page> Pages { get; set; }
     }
 }
 """
@@ -28,11 +31,14 @@ namespace HelloWorld
 let main argv = 
 
     let ctx = parseSource sampleCode
+    let config = { nullableMode = NullableMode.Undefined }
 
-    let getTypeCtx = getType ctx
-    let transpileCtx = transpileClass ctx
+    let withCtx f = f ctx
 
-    let pipeline = getTypeCtx >> transpileCtx
+    //let getTypeCtx = getType ctx
+    //let transpileCtx = transpileClass ctx
+
+    let pipeline = withCtx getType >> withCtx (transpileInterface config)
 
     printfn "%A" <| pipeline "HelloWorld.Book"
     0 // return an integer exit code

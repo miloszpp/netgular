@@ -1,13 +1,21 @@
 ﻿module Netgular.TypeScriptModel
 
-type TSType =
-    | TSNumber
-    | TSString
+type TSTypeRef =
+    | TSNumberRef
+    | TSStringRef
+    | TSTypeRef of string
+    | TSGenericTypeRef of string * TSTypeRef seq
+    | TSArray of TSTypeRef
+    | TSUnion of TSTypeRef list
+    | TSTypeParameterRef
+    | TSAnyRef
+    | TSNull
+    | TSUndefined
 
-type TSClassMember =
-    | TSField of TSType * string
+type TSInterfaceMember =
+    | TSField of TSTypeRef * string
 
-type TSClass = {
+type TSInterfaceDef = {
     name: string
-    members: TSClassMember list
+    members: TSInterfaceMember seq
     }
