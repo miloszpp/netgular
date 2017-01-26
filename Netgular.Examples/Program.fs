@@ -1,8 +1,12 @@
 ﻿// Learn more about F# at http://fsharp.net
 // See the 'F# Tutorial' project for more help.
 
+open System
+open System.IO
+
 open Netgular.Transpiler
 open Netgular.Config
+open Netgular.TypeScriptEmitter
 
 let sampleCode = """
 using System;
@@ -35,10 +39,12 @@ let main argv =
 
     let withCtx f = f ctx
 
-    //let getTypeCtx = getType ctx
-    //let transpileCtx = transpileClass ctx
+    let writer = System.Console.Out
 
-    let pipeline = withCtx getType >> withCtx (transpileInterface config)
+    let pipeline = 
+        withCtx getType >> 
+        withCtx (transpileInterface config) >> 
+        emitInterface writer
 
     printfn "%A" <| pipeline "HelloWorld.Book"
     0 // return an integer exit code

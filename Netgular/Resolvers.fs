@@ -42,6 +42,9 @@ and resolveGeneric config (namedSymbol: INamedTypeSymbol) =
         TSGenericTypeRef (namedSymbol.Name, typeArgs) |> Some
     else None
 
+and resolveTypeNameRef config (namedSymbol: INamedTypeSymbol) =
+    Some <| TSTypeRef namedSymbol.Name
+
 and resolveTypeRef config (symbol:ITypeSymbol) =
     opt {
         let! namedSymbol = toNamedTypeSymbol symbol
@@ -49,7 +52,8 @@ and resolveTypeRef config (symbol:ITypeSymbol) =
             resolvePrimitive;
             resolveEnumerable;
             resolveNullable;
-            resolveGeneric
+            resolveGeneric;
+            resolveTypeNameRef
         ]
         let resolve resolver = resolver config namedSymbol
         return! resolvers |> Seq.tryPick resolve
