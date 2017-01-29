@@ -8,6 +8,8 @@ open Netgular.Transpiler
 open Netgular.Config
 open Netgular.TypeScriptEmitter
 
+open Microsoft.CodeAnalysis.MSBuild
+
 let sampleCode = """
 using System;
 using System.Collections.Generic;
@@ -34,7 +36,15 @@ namespace HelloWorld
 [<EntryPoint>]
 let main argv = 
 
-    let ctx = parseSource sampleCode
+    let projectPath = "../../../Netgular.Examples.WebApi/Netgular.Examples.Webapi.csproj"
+
+    let msWorkplace = MSBuildWorkspace.Create()
+    let project = msWorkplace.OpenProjectAsync(projectPath).Result
+
+    let comp = project.GetCompilationAsync().Result
+
+    //let ctx = parseSource sampleCode
+    let ctx = { compilation = comp; model = null }
     let config = { nullableMode = NullableMode.Undefined }
 
     let withCtx f = f ctx
@@ -46,6 +56,6 @@ let main argv =
         withCtx (transpileInterface config) >> 
         emitInterface writer
 
-    printfn "%A" <| pipeline "HelloWorld.Book"
+    printfn "%A" <| pipeline "Netgular.Examples.WebApi.Book"
     0 // return an integer exit code
 

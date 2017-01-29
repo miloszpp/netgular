@@ -11,7 +11,7 @@ open Netgular.Config;
 open Netgular.Resolvers;
 
 type Context = {
-    compilation: CSharpCompilation
+    compilation: Compilation
     model: SemanticModel
     }
 
