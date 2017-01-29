@@ -8,6 +8,7 @@ open Netgular.Transpiler
 open Netgular.Config
 open Netgular.TypeScriptEmitter
 
+open Microsoft.CodeAnalysis
 open Microsoft.CodeAnalysis.MSBuild
 
 let sampleCode = """
@@ -41,7 +42,7 @@ let main argv =
     let msWorkplace = MSBuildWorkspace.Create()
     let project = msWorkplace.OpenProjectAsync(projectPath).Result
 
-    let comp = project.GetCompilationAsync().Result
+    let comp: Compilation = project.GetCompilationAsync().Result
 
     //let ctx = parseSource sampleCode
     let ctx = { compilation = comp; model = null }

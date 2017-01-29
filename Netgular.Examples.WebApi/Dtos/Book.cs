@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+
 namespace Netgular.Examples.WebApi
 {
     public class Book
@@ -14,5 +16,7 @@ namespace Netgular.Examples.WebApi
             get;
             set;
         }
+
+        public IEnumerable<string> Pages { get; set; }
     }
 }
