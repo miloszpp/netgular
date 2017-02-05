@@ -121,11 +121,6 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Netgular.Standalone\Netgular.Standalone.csproj">
-      <Name>Netgular.Standalone</Name>
-      <Project>{bcc7df61-bf33-465e-8cfb-a9e4f8ec9a72}</Project>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\Netgular.TypeScriptEmitter\Netgular.TypeScriptEmitter.fsproj">
       <Name>Netgular.TypeScriptEmitter</Name>
       <Project>{213cab1b-23c9-4649-a2a5-a69ce5bc5aee}</Project>
