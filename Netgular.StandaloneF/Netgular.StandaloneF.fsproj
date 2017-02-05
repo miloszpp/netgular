@@ -131,8 +131,8 @@
       <Project>{a4d67ecd-cf31-40c7-93d7-a56493d2a696}</Project>
       <Private>True</Private>
     </ProjectReference>
-    <ProjectReference Include="..\Netgular\Netgular.fsproj">
-      <Name>Netgular</Name>
+    <ProjectReference Include="..\Netgular\Netgular.CodeGenerator.fsproj">
+      <Name>Netgular.CodeGenerator</Name>
       <Project>{8b578c89-3833-4d93-9ccb-3f8e8413d645}</Project>
       <Private>True</Private>
     </ProjectReference>

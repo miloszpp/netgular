@@ -2,7 +2,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Netgular", "Netgular\Netgular.fsproj", "{8B578C89-3833-4D93-9CCB-3F8E8413D645}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Netgular.CodeGenerator", "Netgular\Netgular.CodeGenerator.fsproj", "{8B578C89-3833-4D93-9CCB-3F8E8413D645}"
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Netgular.TypeScriptModel", "Netgular.TypeScriptModel\Netgular.TypeScriptModel.fsproj", "{A4D67ECD-CF31-40C7-93D7-A56493D2A696}"
 EndProject

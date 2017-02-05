@@ -1,4 +1,4 @@
-﻿module Netgular.Transpiler
+﻿module Netgular.CodeGenerator.TypeTranspiler
 
 open System;
 open Microsoft.CodeAnalysis;
@@ -6,17 +6,8 @@ open Microsoft.CodeAnalysis.CSharp;
 open Microsoft.CodeAnalysis.CSharp.Syntax;
 
 open Netgular.TypeScriptModel;
-open Netgular.Utils;
-open Netgular.Config;
-open Netgular.Context;
-open Netgular.Resolvers;
-
-//let parseSource source =
-//    let tree = CSharpSyntaxTree.ParseText (source:string)
-//    let root = tree.GetRoot() :?> CompilationUnitSyntax
-//    let compilation = CSharpCompilation.Create("DummyAssembly").AddReferences(MetadataReference.CreateFromFile(typedefof<obj>.Assembly.Location)).AddSyntaxTrees(tree)
-//    let model = compilation.GetSemanticModel(tree, true)
-//    { compilation = compilation }
+open Netgular.CodeGenerator.Common;
+open Netgular.CodeGenerator.TypeRefResolver;
 
 let getType (context: Context) name =
     context.compilation.GetTypeByMetadataName (name: String)
@@ -26,10 +17,10 @@ let private getProperties (classSymbol:INamedTypeSymbol) =
         |> Seq.where (fun m -> m.Kind = SymbolKind.Property) 
         |> Seq.cast<IPropertySymbol>
 
-let transpileInterface config context (classSymbol: INamedTypeSymbol) =
+let transpileInterface context (classSymbol: INamedTypeSymbol) =
     let getMember (property:IPropertySymbol) =
         let name = property.Name
-        let tsType = resolveTypeRef config property.Type
+        let tsType = resolveTypeRef context.config property.Type
         TSField(tsType, name)
     let fields = getProperties classSymbol
                     |> Seq.map getMember

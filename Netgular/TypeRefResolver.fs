@@ -1,16 +1,15 @@
-﻿module Netgular.Resolvers
+﻿module Netgular.CodeGenerator.TypeRefResolver
 
 open Microsoft.CodeAnalysis;
 
 open Netgular.TypeScriptModel;
-open Netgular.Utils;
-open Netgular.Config;
+open Netgular.CodeGenerator.Common;
 
-let toNamedTypeSymbol: (ITypeSymbol -> INamedTypeSymbol option) = function
+let private toNamedTypeSymbol: (ITypeSymbol -> INamedTypeSymbol option) = function
     | :? INamedTypeSymbol as named -> Some named
     | _ -> None    
 
-let resolvePrimitive config (namedSymbol: INamedTypeSymbol) =
+let private resolvePrimitive config (namedSymbol: INamedTypeSymbol) =
         match namedSymbol.SpecialType with
         | SpecialType.System_String -> Some TSStringRef
         | SpecialType.System_Int32 -> Some TSNumberRef
@@ -19,14 +18,14 @@ let resolvePrimitive config (namedSymbol: INamedTypeSymbol) =
         | SpecialType.System_Double -> Some TSNumberRef
         | _ -> None
 
-let rec resolveEnumerable config (namedSymbol: INamedTypeSymbol) =
+let rec private resolveEnumerable config (namedSymbol: INamedTypeSymbol) =
     let enumerable = namedSymbol.Interfaces |> Seq.exists (fun i -> i.Name = "IEnumerable")
     match enumerable, namedSymbol.IsGenericType with
     | true, true -> namedSymbol.TypeArguments |> Seq.head |> resolveTypeRef config |> TSArray |> Some
     | true, false -> TSArray TSAnyRef |> Some
     | _ -> None
 
-and resolveNullable config (namedSymbol: INamedTypeSymbol) =
+and private resolveNullable config (namedSymbol: INamedTypeSymbol) =
     if namedSymbol.Name = "Nullable" then
         let inner = namedSymbol.TypeArguments |> Seq.head |> (resolveTypeRef config)
         Some <| match config.nullableMode with
@@ -36,13 +35,13 @@ and resolveNullable config (namedSymbol: INamedTypeSymbol) =
                 | NullableMode.NullUndefined -> TSUnion [inner; TSNull; TSUndefined]
     else None
 
-and resolveGeneric config (namedSymbol: INamedTypeSymbol) = 
+and private resolveGeneric config (namedSymbol: INamedTypeSymbol) = 
     if (namedSymbol.IsGenericType) then
         let typeArgs = namedSymbol.TypeArguments |> Seq.map (resolveTypeRef config)
         TSGenericTypeRef (namedSymbol.Name, typeArgs) |> Some
     else None
 
-and resolveTypeNameRef config (namedSymbol: INamedTypeSymbol) =
+and private resolveTypeNameRef config (namedSymbol: INamedTypeSymbol) =
     Some <| TSTypeRef namedSymbol.Name
 
 and resolveTypeRef config (symbol:ITypeSymbol) =

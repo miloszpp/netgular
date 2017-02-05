@@ -1,4 +1,4 @@
-﻿module Netgular.ServiceGeneration
+﻿module Netgular.CodeGenerator.ServiceGenerator
 
 open System;
 open System.Linq;
@@ -7,10 +7,10 @@ open Microsoft.CodeAnalysis;
 open Microsoft.CodeAnalysis.CSharp;
 open Microsoft.CodeAnalysis.CSharp.Syntax;
 
-open Netgular.Utils
-open Netgular.Context
-open Netgular.Transpiler
-open Netgular.Resolvers
+open Netgular.CodeGenerator.Common
+open Netgular.CodeGenerator.TypeTranspiler
+open Netgular.CodeGenerator.TypeRefResolver
+
 open Netgular.TypeScriptModel
 
 let getBaseClasses (symbol: INamedTypeSymbol) =
@@ -40,7 +40,6 @@ let findControllers (ctx: Context) (project: Project) =
 let findActions (controller: ClassDeclarationSyntax) =
     let isAction (m:MethodDeclarationSyntax) =
         let attributes = m.DescendantNodes() |> Seq.choose castAs<AttributeSyntax>
-        System.Console.WriteLine(attributes)
         attributes |> Seq.exists (fun a -> a.Name.ToString().StartsWith "Http")
     controller.Members 
         |> Seq.choose castAs<MethodDeclarationSyntax>
@@ -62,9 +61,9 @@ let generateService config (controllerSyntax: ClassDeclarationSyntax, controller
     let methods = actions |> Seq.map generateMember |> Seq.toList
     { className = className; members = methods }
 
-let generateAllServices config context project =
+let generateAllServices context project =
     seq {
         for controller in findControllers context project do
-            yield generateService config controller
+            yield generateService context.config controller
     }
 

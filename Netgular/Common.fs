@@ -1,4 +1,5 @@
-﻿module Netgular.Utils
+﻿[<AutoOpen>]
+module Netgular.CodeGenerator.Common
 
 type OptionBuilder() =
     member x.Bind(v,f) = Option.bind f v
