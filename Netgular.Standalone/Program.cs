@@ -12,13 +12,15 @@ namespace Netgular.Standalone
             var project = workspace.OpenProjectAsync(projectPath).Result;
             var compilation = project.GetCompilationAsync().Result;
 
-            var context = new Transpiler.Context(compilation, null);
+            var context = new Context.Context(compilation);
             var config = new Config.Config(Config.NullableMode.Null);
 
             var symbol = Transpiler.getType(context, "Netgular.Examples.WebApi.Book");
             var tsModel = Transpiler.transpileInterface(config, context, symbol);
 
-            TypeScriptEmitter.emitInterface(Console.Out, tsModel);
+            //TypeScriptEmitter.emitInterface(Console.Out, tsModel);
+
+            var services = ServiceGeneration.generateAllServices(config, context, project);
 
             Console.ReadKey();
         }

@@ -12,6 +12,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netgular.Examples.WebApi", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Netgular.Standalone", "Netgular.Standalone\Netgular.Standalone.csproj", "{BCC7DF61-BF33-465E-8CFB-A9E4F8EC9A72}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{5551EB05-D2C1-4585-9A9B-AF3649000533}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Netgular.StandaloneF", "Netgular.StandaloneF\Netgular.StandaloneF.fsproj", "{97011CC7-AB89-4141-AC65-401C043FD981}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,9 +63,20 @@ Global
 		{BCC7DF61-BF33-465E-8CFB-A9E4F8EC9A72}.Release|Any CPU.ActiveCfg = Release|x86
 		{BCC7DF61-BF33-465E-8CFB-A9E4F8EC9A72}.Release|x86.ActiveCfg = Release|x86
 		{BCC7DF61-BF33-465E-8CFB-A9E4F8EC9A72}.Release|x86.Build.0 = Release|x86
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Debug|x86.Build.0 = Debug|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Release|x86.ActiveCfg = Release|Any CPU
+		{97011CC7-AB89-4141-AC65-401C043FD981}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{1D3D234F-681C-4E75-85CB-9BD87779D309} = {5551EB05-D2C1-4585-9A9B-AF3649000533}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

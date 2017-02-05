@@ -8,22 +8,18 @@ open Microsoft.CodeAnalysis.CSharp.Syntax;
 open Netgular.TypeScriptModel;
 open Netgular.Utils;
 open Netgular.Config;
+open Netgular.Context;
 open Netgular.Resolvers;
 
-type Context = {
-    compilation: Compilation
-    model: SemanticModel
-    }
+//let parseSource source =
+//    let tree = CSharpSyntaxTree.ParseText (source:string)
+//    let root = tree.GetRoot() :?> CompilationUnitSyntax
+//    let compilation = CSharpCompilation.Create("DummyAssembly").AddReferences(MetadataReference.CreateFromFile(typedefof<obj>.Assembly.Location)).AddSyntaxTrees(tree)
+//    let model = compilation.GetSemanticModel(tree, true)
+//    { compilation = compilation }
 
-let parseSource source =
-    let tree = CSharpSyntaxTree.ParseText (source:string)
-    let root = tree.GetRoot() :?> CompilationUnitSyntax
-    let compilation = CSharpCompilation.Create("DummyAssembly").AddReferences(MetadataReference.CreateFromFile(typedefof<obj>.Assembly.Location)).AddSyntaxTrees(tree)
-    let model = compilation.GetSemanticModel(tree, true)
-    { compilation = compilation; model = model }
-
-let getType context name =
-    context.compilation.GetTypeByMetadataName name
+let getType (context: Context) name =
+    context.compilation.GetTypeByMetadataName (name: String)
 
 let private getProperties (classSymbol:INamedTypeSymbol) =
     classSymbol.GetMembers()

@@ -46,6 +46,17 @@ and resolveTypeNameRef config (namedSymbol: INamedTypeSymbol) =
     Some <| TSTypeRef namedSymbol.Name
 
 and resolveTypeRef config (symbol:ITypeSymbol) =
+//    opt {
+//        let! namedSymbol = toNamedTypeSymbol symbol
+//        let r f = f config namedSymbol
+//        return! orElse {
+//            return! r resolvePrimitive
+//            return! r resolveEnumerable
+//            return! r resolveNullable
+//            return! r resolveGeneric
+//            return! r resolveTypeNameRef
+//        }
+//    } |> getOrElse TSAnyRef
     opt {
         let! namedSymbol = toNamedTypeSymbol symbol
         let resolvers = [ 
