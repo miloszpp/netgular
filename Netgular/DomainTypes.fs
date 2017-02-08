@@ -13,7 +13,8 @@ type NullableMode =
     | NullUndefined
 
 type Config = {
-     nullableMode: NullableMode
+     nullableMode: NullableMode;
+     apiPath: String
     }
 
 type Context = {

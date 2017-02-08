@@ -10,7 +10,7 @@ namespace Netgular.Examples.WebApi
     public class BookController : ApiController
     {
         [HttpGet]
-        [Route("")]
+        [Route("GetAll")]
         public IEnumerable<Book> GetBooks()
         {
             return new Book[] {

@@ -21,9 +21,21 @@ let getAccessModifierString = function
     | Public -> "public"
     | Private -> "private"
 
-let getExpressionString = function
+let getOperatorString = function
+    | Plus -> "+"
+
+let rec getExpressionString = function
     | TSNumberLiteral n -> n.ToString()
-    | TSStringLiteral s -> s
+    | TSStringLiteral s -> sprintf "\"%s\"" s
+    | TSMethodCall(target, methodName, args) -> 
+        let argsString = args |> Seq.map getExpressionString |> String.concat ", "
+        sprintf "(%s).%s(%s)" (getExpressionString target) methodName argsString
+    | TSFieldAccess(target, fieldName) ->
+        sprintf "(%s).%s" (getExpressionString target) fieldName
+    | TSBinary(op, a, b) ->
+        sprintf "%s %s %s" (getExpressionString a) (getOperatorString op) (getExpressionString b)
+    | TSThis ->
+        "this"
 
 let emitInterfaceMember ctx = function
     | TSField (typeRef, name) -> emit ctx "\t%s: %s;\n" name (getTypeRefString typeRef)
@@ -33,8 +45,11 @@ let emitInterface ctx interfaceDef =
     interfaceDef.members |> Seq.iter (emitInterfaceMember ctx)
     emit ctx "\n}\n"
 
-let emitStatement ctx = function
-    | _ -> emit ctx "\n"
+let rec emitStatement ctx = function
+    | TSReturn(expr) -> emit ctx "return %s;\n" (getExpressionString expr)
+    | TSLet(name, expr) -> emit ctx "let %s = %s;\n" name (getExpressionString expr)
+    | TSStatementList(statements) -> statements |> Seq.iter (emitStatement ctx)
+    | TSNoOp -> ()
 
 let emitClassMember ctx = function
     | TSClassField(fieldType, accessModifier, name, initializer) ->
@@ -44,12 +59,19 @@ let emitClassMember ctx = function
         | None -> emit ctx ";\n"
     | TSMethod(returnType, parameters, accessModifier, name, body) ->
         let getParamString = function
-            | TSMethodParameter(paramTypeRef, paramName) -> sprintf "%s %s" (getTypeRefString paramTypeRef) paramName
+            | TSMethodParameter(paramTypeRef, paramName) -> sprintf "%s : %s" paramName (getTypeRefString paramTypeRef)
         let parametersString = parameters |> Seq.map getParamString |> String.concat ", "
-        emit ctx "%s %s %s(%s) {\n" (getTypeRefString returnType) (getAccessModifierString accessModifier) name parametersString
+        emit ctx "%s %s %s(%s) {\n" (getAccessModifierString accessModifier) (getTypeRefString returnType) name parametersString
         emitStatement (indent ctx) body
         emit ctx "}\n"
-    | TSConstructor(parameters, body) -> ()
+    | TSConstructor(parameters, body) ->
+        let getParamString = function
+            | TSConstructorParameter(paramTypeRef, paramName, access) -> 
+                sprintf "%s %s : %s" (getAccessModifierString access) paramName (getTypeRefString paramTypeRef)
+        let parametersString = parameters |> Seq.map getParamString |> String.concat ", "
+        emit ctx "constructor(%s) {\n" parametersString
+        emitStatement (indent ctx) body
+        emit ctx "}\n"
 
 let emitClass ctx (classDef: TSClassDef) =
     emit ctx "export class %s {\n" classDef.className

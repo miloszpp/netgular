@@ -16,7 +16,7 @@ let main argv =
     let project = workspace.OpenProjectAsync(projectPath).Result;
     let compilation = project.GetCompilationAsync().Result;
     
-    let config = { nullableMode = Null }
+    let config = { nullableMode = Null; apiPath = "/api" }
     let context = { compilation = compilation; config = config }
 
     let symbol = getType context "Netgular.Examples.WebApi.Book"

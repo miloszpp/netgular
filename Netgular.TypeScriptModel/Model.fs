@@ -22,18 +22,24 @@ type TSInterfaceDef = {
 
 type TSAccessModifier = Public | Private
 
+type TSOperator =
+    | Plus
+
 type TSExpression =
     | TSNumberLiteral of decimal
     | TSStringLiteral of string
+    | TSMethodCall of TSExpression * string * TSExpression list
+    | TSFieldAccess of TSExpression * string
+    | TSBinary of TSOperator * TSExpression * TSExpression
+    | TSThis
     
 type TSFieldInitializer = TSExpression option
 
 type TSMethodParameter = TSMethodParameter of (TSTypeRef * string)
 
-type TSConstructorParameters = TSConstructorParameters of (TSTypeRef * string * TSAccessModifier) list
+type TSConstructorParameter = TSConstructorParameter of TSTypeRef * string * TSAccessModifier
 
 type TSStatement =
-    | TSMethodCall of TSExpression * string * TSExpression list
     | TSReturn of TSExpression
     | TSLet of string * TSExpression
     | TSStatementList of TSStatement seq
@@ -42,7 +48,7 @@ type TSStatement =
 type TSClassMember =
     | TSClassField of TSTypeRef * TSAccessModifier * string * TSFieldInitializer
     | TSMethod of TSTypeRef * TSMethodParameter seq * TSAccessModifier * string * TSStatement
-    | TSConstructor of TSConstructorParameters * TSStatement
+    | TSConstructor of TSConstructorParameter list * TSStatement
 
 type TSClassDef = {
     className: string

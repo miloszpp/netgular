@@ -47,6 +47,9 @@ let findActions (controller: ClassDeclarationSyntax) =
     
 let generateService config (controllerSyntax: ClassDeclarationSyntax, controllerSymbol: INamedTypeSymbol) =
     let actions = findActions controllerSyntax
+    let ctor =
+        let httpParameter = TSConstructorParameter(TSTypeRef("Http"), "http", TSAccessModifier.Private)
+        TSConstructor([httpParameter], TSNoOp)
     let generateMember (action: MethodDeclarationSyntax) =
         let actionSymbol = controllerSymbol.GetMembers(action.Identifier.Text) |> Seq.head :?> IMethodSymbol
         let name = actionSymbol.Name.ToString()
@@ -55,11 +58,24 @@ let generateService config (controllerSyntax: ClassDeclarationSyntax, controller
             for parameter in actionSymbol.Parameters do
                 let typeRef = resolveTypeRef config parameter.Type
                 yield TSMethodParameter (typeRef, parameter.Name.ToString())
-        }
-        TSMethod(returnType, parameters, TSAccessModifier.Public, name, TSNoOp)
+        }        
+        let methodBody =
+            let routeAttribute = action.DescendantNodes() 
+                                 |> Seq.choose castAs<AttributeSyntax> 
+                                 |> Seq.find (fun a -> a.Name.ToString() = "Route")
+            let pathOption = opt {
+                let! argumentList = routeAttribute.ArgumentList |> Option.ofObj
+                let! firstArg = argumentList.Arguments |> Seq.tryHead
+                let! firstArgLiteral = firstArg |> castAs<LiteralExpressionSyntax>
+                return firstArgLiteral.Token.Text
+                }
+            let path = pathOption |> getOrElse ""
+            let pathExpr = TSStringLiteral(sprintf "%s/%s" config.apiPath path)
+            TSReturn(TSMethodCall(TSFieldAccess(TSThis, "http"), "get", [pathExpr]))
+        TSMethod(returnType, parameters, TSAccessModifier.Public, name, methodBody)
     let className = controllerSymbol.Name.ToString()
     let methods = actions |> Seq.map generateMember |> Seq.toList
-    { className = className; members = methods }
+    { className = className; members = ctor :: methods }
 
 let generateAllServices context project =
     seq {
